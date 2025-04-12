@@ -58,6 +58,10 @@ const config: Config = {
           '5': 'hsl(var(--chart-5))',
         },
       },
+	  fontFamily: {
+		sans: ['var(--font-inter)', 'sans-serif'],
+		roboto: ['var(--font-roboto)', 'sans-serif'],
+	  },
     },
   },
   plugins: [animatePlugin],
