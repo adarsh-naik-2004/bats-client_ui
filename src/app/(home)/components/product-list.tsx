@@ -7,7 +7,7 @@ const ProductList = async ({ searchParams }: { searchParams: { shopId: string } 
     console.log('searchParams', searchParams.shopId);
     const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
         next: {
-            revalidate: 3600, // 1 hour
+            revalidate: 60, 
         },
     });
 
@@ -21,7 +21,7 @@ const ProductList = async ({ searchParams }: { searchParams: { shopId: string } 
         `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&storeId=${searchParams.shopId}`,
         {
             next: {
-                revalidate: 3600, // 1 hour
+                revalidate: 60, 
             },
         }
     );

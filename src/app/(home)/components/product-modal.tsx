@@ -47,8 +47,9 @@ const ProductModal = ({ product }: { product: Product }) => {
     const [selectedAccessorys, setSelectedAccessorys] = React.useState<Accessory[]>([]);
 
     const totalPrice = React.useMemo(() => {
+        
         const accessorysTotal = selectedAccessorys.reduce((acc, curr) => acc + curr.price, 0);
-
+    
         const configPricing = Object.entries(chosenConfig).reduce(
             (acc, [key, value]: [string, string]) => {
                 const price = product.priceConfiguration[key].availableOptions[value];
@@ -56,8 +57,10 @@ const ProductModal = ({ product }: { product: Product }) => {
             },
             0
         );
+    
         return configPricing + accessorysTotal;
     }, [chosenConfig, selectedAccessorys, product]);
+    
 
     const alreadyHasInCart = React.useMemo(() => {
         const currentConfiguration = {

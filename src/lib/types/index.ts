@@ -1,3 +1,5 @@
+import { CartItem } from "../store/features/cart/cartSlice";
+
 export interface Store {
     id: string;
     name: string;
@@ -6,7 +8,7 @@ export interface Store {
 
 export interface PriceConfiguration {
     [key: string]: {
-        priceType: 'base' | 'aditional';
+        priceType: 'base' | 'additional';
         availableOptions: string[];
     };
 }
@@ -32,7 +34,7 @@ export type ProductAttribute = {
 
 export interface ProductPriceConfiguration {
     [key: string]: {
-        priceType: 'base' | 'aditional';
+        priceType: 'base' | 'additional';
         availableOptions: {
             [key: string]: number;
         };
@@ -57,3 +59,48 @@ export type Accessory = {
     price: number;
     image: string;
 };
+
+
+export type Address = {
+    text: string;
+    isDefault: boolean;
+};
+
+export type Customer = {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    addresses: Address[];
+};
+
+export type CouponCodeData = {
+    code: string;
+    storeId: string;
+};
+
+export type OrderData = {
+    cart: CartItem[];
+    couponCode: string;
+    storeId: string;
+    customerId: string;
+    comment: string;
+    address: string;
+    paymentMode: string;
+};
+
+export interface Order {
+    _id: string;
+    customerId: Customer;
+    total: number;
+    discount: number;
+    taxes: number;
+    deliveryCharges: number;
+    address: string;
+    storeId: string;
+    comment?: string;
+    paymentMode: string;
+    orderStatus: string;
+    paymentStatus: string;
+    createdAt: string;
+}

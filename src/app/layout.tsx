@@ -7,6 +7,7 @@ import StoreProvider from './StoreProvider';
 import { Toaster } from '@/components/ui/toaster';
 import Refresher from '@/components/custom/refresher';
 import RemoveHydrationError from '@/components/remove-hydration-error';
+import QueryProvider from './QueryProvider';
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 
@@ -22,20 +23,22 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body
-                className={cn(
-                    'min-h-screen bg-background font-manrope antialiased',
-                    manrope.variable
-                )}>
-                <StoreProvider>
-                    <RemoveHydrationError />
-                    <Refresher>
-                        <Header />
-                        <main>{children}</main>
-                        <Toaster />
-                    </Refresher>
-                </StoreProvider>
-            </body>
+            <StoreProvider>
+                <body
+                    className={cn(
+                        'min-h-screen bg-background font-manrope antialiased',
+                        manrope.variable
+                    )}>
+                    <QueryProvider>
+                        <RemoveHydrationError />
+                        <Refresher>
+                            <Header />
+                            <main>{children}</main>
+                            <Toaster />
+                        </Refresher>
+                    </QueryProvider>
+                </body>
+            </StoreProvider>
         </html>
     );
 }
