@@ -3,7 +3,10 @@ import { Button } from '@/components/ui/button';
 import ProductList from './components/product-list';
 import { Suspense } from 'react';
 
-export default async function Home({ searchParams }: { searchParams: { shopId: string } }) {
+export default async function Home({ searchParams }: { searchParams: Promise<{ shopId?: string }> }) {
+
+    const resolvedSearchParams = await searchParams;
+
     return (
         <>
             {/* Hero Section */}
@@ -41,7 +44,7 @@ export default async function Home({ searchParams }: { searchParams: { shopId: s
 
             {/* Product Section */}
             <Suspense fallback={<p className="text-center py-10">Loading products...</p>}>
-                <ProductList searchParams={searchParams} />
+                <ProductList searchParams={{ shopId: resolvedSearchParams.shopId ?? '' }} />
             </Suspense>
         </>
     );

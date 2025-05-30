@@ -7,9 +7,12 @@ import { Button } from '@/components/ui/button';
 import { cookies } from 'next/headers';
 import { Order } from '@/lib/types';
 
-const SingleOrder = async ({ params }: { params: { orderId: string } }) => {
+const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> }) => {
+
+    const resolvedParams = await params;
+
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_ORDER_API}/orders/${params.orderId}?fields=address,paymentStatus,paymentMode`,
+        `${process.env.NEXT_PUBLIC_ORDER_API}/orders/${resolvedParams.orderId}?fields=address,paymentStatus,paymentMode`,
         {
             headers: {
                 Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,

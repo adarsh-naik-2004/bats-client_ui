@@ -7,12 +7,15 @@ import Link from 'next/link';
 import React from 'react';
 import CartCleaner from '../checkout/components/cartCleaner';
 
-const Payment = ({
+const Payment = async ({
     searchParams,
 }: {
-    searchParams: { success: string; orderId: string; shopId: string };
+    searchParams: Promise<{ success?: string; orderId?: string; shopId?: string }>;
 }) => {
-    const isOrderSuccess = searchParams.success === 'true';
+
+    const resolvedSearchParams = await searchParams;
+
+    const isOrderSuccess = resolvedSearchParams.success === 'true';
 
     return (
         <>
@@ -55,9 +58,9 @@ const Payment = ({
                                 <LayoutDashboard size={20} />
                                 <h2 className="text-base font-medium">Order reference: </h2>
                                 <Link
-                                    href={`/order-status/${searchParams.orderId}`}
+                                    href={`/order-status/${resolvedSearchParams.orderId}`}
                                     className="underline">
-                                    {searchParams.orderId}
+                                    {resolvedSearchParams.orderId}
                                 </Link>
                             </div>
 
@@ -73,7 +76,7 @@ const Payment = ({
                 {isOrderSuccess ? (
                     <Button asChild className="mt-6">
                         <Link
-                            href={`/order-status/${searchParams.orderId}?shopId=${searchParams.shopId}`}
+                            href={`/order-status/${resolvedSearchParams.orderId}?shopId=${resolvedSearchParams.shopId}`}
                             className="flex items-center gap-2">
                             <ArrowLeft size={20} className="text-white" />
                             <span>Go to order status page</span>
@@ -82,7 +85,7 @@ const Payment = ({
                 ) : (
                     <Button asChild className="mt-6">
                         <Link
-                            href={`/checkout?shopId=${searchParams.shopId}`}
+                            href={`/checkout?shopId=${resolvedSearchParams.shopId}`}
                             className="flex items-center gap-2">
                             <ArrowLeft size={20} className="text-white" />
                             <span>Go to checkout</span>
