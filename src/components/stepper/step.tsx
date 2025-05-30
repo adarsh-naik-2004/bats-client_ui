@@ -13,9 +13,9 @@ interface StepInternalConfig {
 
 interface FullStepProps extends StepProps, StepInternalConfig {}
 
-const Step = React.forwardRef<HTMLLIElement, StepProps>((props, ref: React.Ref<any>) => {
+const Step = React.forwardRef<HTMLDivElement, StepProps>((props, ref) => {
     const {
-        children,
+        // children, // Removed unused variable
         description,
         icon,
         state,
@@ -30,7 +30,7 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>((props, ref: React.Ref<a
         onClickStep,
     } = props as FullStepProps;
 
-    const { isVertical, isError, isLoading, clickable } = useStepper();
+    const { isError, isLoading, clickable } = useStepper(); // Removed isVertical
 
     const hasVisited = isCurrentStep || isCompletedStep;
 
@@ -53,11 +53,9 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>((props, ref: React.Ref<a
         onClickStep,
     };
 
-    const renderStep = () => {
-        return <HorizontalStep ref={ref} {...sharedProps} />;
-    };
-
-    return renderStep();
+    return <HorizontalStep ref={ref} {...sharedProps} />;
 });
+
+Step.displayName = "Step";
 
 export { Step };

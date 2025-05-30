@@ -15,33 +15,35 @@ const VARIABLE_SIZES = {
 };
 
 const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-	(props, ref: React.Ref<HTMLDivElement>) => {
-		const {
+	(
+		{
 			className,
 			children,
-			orientation: orientationProp,
+			orientation: orientationProp = "horizontal",
 			state,
-			responsive,
+			responsive = true,
 			checkIcon,
 			errorIcon,
 			onClickStep,
 			mobileBreakpoint,
 			expandVerticalSteps = false,
 			initialStep = 0,
-			size,
+			size = "md",
 			steps,
 			variant,
 			styles,
 			variables,
 			scrollTracking = false,
 			...rest
-		} = props;
+		},
+		ref: React.Ref<HTMLDivElement>
+	) => {
 
 		const childArr = React.Children.toArray(children);
 
 		const items = [] as React.ReactElement[];
 
-		const footer = childArr.map((child, _index) => {
+		const footer = childArr.map((child) => {
 			if (!React.isValidElement(child)) {
 				throw new Error("Stepper children must be valid React elements.");
 			}
@@ -115,14 +117,11 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 				{footer}
 			</StepperProvider>
 		);
-	},
+	}
 );
+// Removed Stepper.defaultProps as defaults are now set in the function parameters
 
-Stepper.defaultProps = {
-	size: "md",
-	orientation: "horizontal",
-	responsive: true,
-};
+Stepper.displayName = "Stepper";
 
 const VerticalContent = ({ children }: { children: React.ReactNode }) => {
 	const { activeStep } = useStepper();
@@ -135,7 +134,7 @@ const VerticalContent = ({ children }: { children: React.ReactNode }) => {
 			{React.Children.map(children, (child, i) => {
 				const isCompletedStep =
 					(React.isValidElement(child) &&
-						(child.props as any).isCompletedStep) ??
+						(child.props as React.ComponentProps<typeof Step>).isCompletedStep) ??
 					i < activeStep;
 				const isLastStep = i === stepCount - 1;
 				const isCurrentStep = i === activeStep;
@@ -170,8 +169,9 @@ const HorizontalContent = ({ children }: { children: React.ReactNode }) => {
 				if (!React.isValidElement(node)) {
 					return null;
 				}
+				const element = node as React.ReactElement<{ children?: React.ReactNode }>;
 				return React.Children.map(
-					node.props.children,
+					element.props.children,
 					(childNode) => childNode,
 				);
 			})}
