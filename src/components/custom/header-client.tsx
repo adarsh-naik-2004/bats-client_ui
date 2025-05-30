@@ -21,7 +21,8 @@ const HeaderClient = ({ session }: { session: unknown }) => {
           </Link>
         </li>
         <li>
-          <Link className="hover:text-primary" href={"/"}>
+          <Link className="transition hover:text-primary hover:underline underline-offset-4"
+ href={"/orders"}>
             Orders
           </Link>
         </li>

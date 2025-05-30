@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom';
 import { LoaderCircle } from 'lucide-react';
 import register from '@/lib/actions/register';
+import React from 'react';
 
 const SubmitButton = () => {
     const { pending } = useFormStatus();
@@ -32,7 +33,7 @@ const initialState = {
 };
 
 export default function SignUpPage() {
-    const [state, formAction] = useFormState(register, initialState);
+    const [state, formAction] = React.useActionState(register, initialState);
 
     if (state.type === 'success') {
         window.location.href = '/';

@@ -18,7 +18,7 @@ export const getSession = async () => {
 };
 
 const getSelf = async (): Promise<Session | null> => {
-    const response = await fetch(`${process.env.BACKEND_URL}/api/auth/auth/self`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/auth/self`, {
         headers: {
             Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
         },

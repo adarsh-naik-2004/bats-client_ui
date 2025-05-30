@@ -9,7 +9,7 @@ const Header = async () => {
   const session = await getSession();
 
   const storesResponse = await fetch(
-    `${process.env.BACKEND_URL}/api/auth/stores?perPage=100`,
+    `${process.env.NEXT_PUBLIC_AUTH_API}/stores?perPage=100`,
     { next: { revalidate: 3600 } }
   );
 

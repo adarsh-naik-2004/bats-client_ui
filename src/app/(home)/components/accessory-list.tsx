@@ -17,8 +17,8 @@ const AccessoryList = ({
         const fetchData = async () => {
             const accessoryResponse = await fetch(
                 `${
-                    process.env.NEXT_PUBLIC_BACKEND_URL
-                }/api/catalog/accessorys?storeId=${searchParams.get('shopId')}`
+                    process.env.NEXT_PUBLIC_COLLECTION_API
+                }/accessorys?storeId=${searchParams.get('shopId')}`
             );
             const accessorys = await accessoryResponse.json();
             setAccessorys(accessorys);

@@ -5,7 +5,7 @@ import { Category, Product } from '@/lib/types';
 
 const ProductList = async ({ searchParams }: { searchParams: { shopId: string } }) => {
     console.log('searchParams', searchParams.shopId);
-    const categoryResponse = await fetch(`${process.env.BACKEND_URL}/api/catalog/categories`, {
+    const categoryResponse = await fetch(`${process.env.NEXT_PUBLIC_COLLECTION_API}/categories`, {
         next: {
             revalidate: 60, 
         },
@@ -18,7 +18,7 @@ const ProductList = async ({ searchParams }: { searchParams: { shopId: string } 
     const categories: Category[] = await categoryResponse.json();
 
     const productsResponse = await fetch(
-        `${process.env.BACKEND_URL}/api/catalog/products?perPage=100&storeId=${searchParams.shopId}`,
+        `${process.env.NEXT_PUBLIC_COLLECTION_API}/products?perPage=100&storeId=${searchParams.shopId}`,
         {
             next: {
                 revalidate: 60, 

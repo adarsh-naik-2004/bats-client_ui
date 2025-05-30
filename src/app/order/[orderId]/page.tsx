@@ -9,7 +9,7 @@ import { Order } from '@/lib/types';
 
 const SingleOrder = async ({ params }: { params: { orderId: string } }) => {
     const response = await fetch(
-        `${process.env.BACKEND_URL}/api/order/orders/${params.orderId}?fields=address,paymentStatus,paymentMode`,
+        `${process.env.NEXT_PUBLIC_ORDER_API}/orders/${params.orderId}?fields=address,paymentStatus,paymentMode`,
         {
             headers: {
                 Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
