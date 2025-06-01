@@ -18,6 +18,7 @@ export default async function login(prevState: unknown, formdata: FormData) {
           email,
           password,
         }),
+        credentials: "include",
       }
     );
 

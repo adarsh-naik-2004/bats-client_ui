@@ -23,6 +23,7 @@ export default async function register(prevState: unknown, formdata: FormData) {
           email,
           password,
         }),
+        credentials: "include",
       }
     );
 
