@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 
 export const logout = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/auth/logout`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_GATEWAY}/auth/logout`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,

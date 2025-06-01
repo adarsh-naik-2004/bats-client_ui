@@ -10,7 +10,7 @@ const ProductList = async ({
 }) => {
   console.log("searchParams", searchParams.shopId);
   const categoryResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_COLLECTION_API}/categories`,
+    `${process.env.NEXT_PUBLIC_API_GATEWAY}/categories`,
     {
       next: {
         revalidate: 60,
@@ -25,7 +25,7 @@ const ProductList = async ({
   const categories: Category[] = await categoryResponse.json();
 
   const productsResponse = await fetch(
-    `${process.env.NEXT_PUBLIC_COLLECTION_API}/products?perPage=100&storeId=${searchParams.shopId}`,
+    `${process.env.NEXT_PUBLIC_API_GATEWAY}/products?perPage=100&storeId=${searchParams.shopId}`,
     {
       next: {
         revalidate: 60,

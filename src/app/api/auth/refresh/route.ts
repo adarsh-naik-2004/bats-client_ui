@@ -7,7 +7,7 @@ export async function POST() {
     const accessTokenValue = cookieStore.get('accessToken')?.value;
     const refreshTokenValue = cookieStore.get('refreshToken')?.value;
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_API}/auth/refresh`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_GATEWAY}/auth/refresh`, {
         method: 'POST',
         headers: {
             Authorization: `Bearer ${accessTokenValue}`,

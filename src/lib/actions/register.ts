@@ -11,7 +11,7 @@ export default async function register(prevState: unknown, formdata: FormData) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_API}/auth/register`,
+      `${process.env.NEXT_PUBLIC_API_GATEWAY}/auth/register`,
       {
         method: "POST",
         headers: {

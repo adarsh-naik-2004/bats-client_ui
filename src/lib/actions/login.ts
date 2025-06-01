@@ -8,7 +8,7 @@ export default async function login(prevState: unknown, formdata: FormData) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_AUTH_API}/auth/login`,
+      `${process.env.NEXT_PUBLIC_API_GATEWAY}/auth/login`,
       {
         method: "POST",
         headers: {

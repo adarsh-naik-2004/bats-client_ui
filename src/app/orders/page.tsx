@@ -22,7 +22,7 @@ const Orders = async () => {
         redirect('/login');
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_ORDER_API}/orders/mine`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_GATEWAY}/orders/mine`, {
         headers: {
             Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
         },

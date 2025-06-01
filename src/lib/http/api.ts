@@ -2,7 +2,7 @@ import axios from 'axios';
 import { CouponCodeData, OrderData, Customer } from '../types';
 
 export const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_ORDER_API,
+    baseURL: process.env.NEXT_PUBLIC_API_GATEWAY,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

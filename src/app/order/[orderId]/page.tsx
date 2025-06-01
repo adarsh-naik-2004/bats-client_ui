@@ -12,7 +12,7 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
     const resolvedParams = await params;
 
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_ORDER_API}/orders/${resolvedParams.orderId}?fields=address,paymentStatus,paymentMode`,
+        `${process.env.NEXT_PUBLIC_API_GATEWAY}/orders/${resolvedParams.orderId}?fields=address,paymentStatus,paymentMode`,
         {
             headers: {
                 Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
