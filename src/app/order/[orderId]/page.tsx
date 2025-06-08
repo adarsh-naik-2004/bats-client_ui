@@ -27,7 +27,7 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
     }
     // const token = (await cookies()).get('accessToken')?.value;
     // console.log('Token from cookies:', token);
-        
+  
     const order: Order = await response.json();
 
     return (

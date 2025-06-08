@@ -33,15 +33,15 @@ const Refresher = ({ children }: { children: React.ReactNode }) => {
       const currentTime = Date.now();
       const refreshTime = exp - currentTime - 5000;
 
-      console.log(`Current time: ${new Date(currentTime).toISOString()}`);
-      console.log(`Token expiry time: ${new Date(exp).toISOString()}`);
-      console.log(
-        `Scheduled refresh time: ${new Date(currentTime + refreshTime).toISOString()}`
-      );
+      // console.log(`Current time: ${new Date(currentTime).toISOString()}`);
+      // console.log(`Token expiry time: ${new Date(exp).toISOString()}`);
+      // console.log(
+      //   `Scheduled refresh time: ${new Date(currentTime + refreshTime).toISOString()}`
+      // );
 
       timeoutId.current = window.setTimeout(() => {
         refreshAccessToken();
-        console.log('Access token is refreshing...');
+        // console.log('Access token is refreshing...');
       }, refreshTime);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -57,7 +57,7 @@ const Refresher = ({ children }: { children: React.ReactNode }) => {
       const res = await fetch('/api/auth/refresh', { method: 'POST' });
 
       if (!res.ok) {
-        console.log('Failed to refresh access token');
+        // console.log('Failed to refresh access token');
         return;
       }
     } catch (error: unknown) {
