@@ -9,7 +9,7 @@ const Logout = () => {
     <Button
       size="sm"
       variant="outline"
-      className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-all duration-300 font-medium px-4 py-2 rounded-full"
+      className="border-orange-500/30 text-orange-300 hover:bg-orange-700/10 hover:border-orange-500/50 transition-all duration-300 font-medium px-4 py-1.5 rounded-full backdrop-blur-sm"
       onClick={async () => {
         await logout();
       }}

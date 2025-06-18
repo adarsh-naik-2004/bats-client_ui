@@ -11,34 +11,42 @@ const AccessoryList = ({
     handleCheckBoxCheck: (accessory: Accessory) => void;
 }) => {
     const searchParams = useSearchParams();
-
     const [accessorys, setAccessorys] = useState<Accessory[]>([]);
+
     useEffect(() => {
         const fetchData = async () => {
             const accessoryResponse = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_API_GATEWAY
-                }/accessorys?storeId=${searchParams.get('shopId')}`
+                `${process.env.NEXT_PUBLIC_API_GATEWAY}/accessorys?storeId=${searchParams.get('shopId')}`
             );
             const accessorys = await accessoryResponse.json();
             setAccessorys(accessorys);
-            console.log('accessorys', accessorys);
         };
         fetchData();
-    },);
+    }, [searchParams]);
 
     return (
-        <section className="mt-6">
-            <h3>Extra accessorys</h3>
-            <div className="grid grid-cols-3 gap-4 mt-2">
-                {accessorys.map((accessory) => {
+        <section className="mt-8">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-orange-700 rounded-full"></div>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-700 bg-clip-text text-transparent">
+                    Premium Accessories
+                </h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-orange-700/50 to-transparent"></div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+                {accessorys.map((accessory, index) => {
                     return (
-                        <AccessoryCard
-                            accessory={accessory}
+                        <div
                             key={accessory.id}
-                            selectedAccessorys={selectedAccessorys}
-                            handleCheckBoxCheck={handleCheckBoxCheck}
-                        />
+                            className="animate-fade-in-up"
+                            style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                            <AccessoryCard
+                                accessory={accessory}
+                                selectedAccessorys={selectedAccessorys}
+                                handleCheckBoxCheck={handleCheckBoxCheck}
+                            />
+                        </div>
                     );
                 })}
             </div>

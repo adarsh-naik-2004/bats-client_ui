@@ -1,3 +1,4 @@
+// customerForm.tsx
 "use client";
 import React from "react";
 import { z } from "zod";
@@ -38,14 +39,12 @@ const formSchema = z.object({
 
 const CustomerForm = () => {
   const dispatch = useAppDispatch();
-
   const router = useRouter();
   const customerForm = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   const searchParam = useSearchParams();
-
   const chosenCouponCode = React.useRef("");
   const idempotencyKeyRef = React.useRef("");
 
@@ -71,12 +70,11 @@ const CustomerForm = () => {
     onSuccess: (data: { razorpayOrderId: string | null }) => {
       if (data.razorpayOrderId) {
         window.location.href = data.razorpayOrderId;
+      } else {
+        alert("Order placed successfully!");
+        dispatch(clearCart());
+        router.push("/orders");
       }
-
-      alert("Order placed successfully!");
-      dispatch(clearCart());
-
-      router.push("/orders");
     },
     onError: (error) => {
       alert(`Order failed: ${error.message}`);
@@ -84,8 +82,11 @@ const CustomerForm = () => {
   });
 
   if (isLoading) {
-    // todo: use Spinner/Loader or Shadcn Skeleton
-    return <h3>Loading...</h3>;
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
@@ -103,190 +104,226 @@ const CustomerForm = () => {
       address: data.address,
       paymentMode: data.paymentMode,
     };
-    console.log("Order data:", orderData);
     mutate(orderData);
   };
 
   return (
-    <Form {...customerForm}>
-      <form onSubmit={customerForm.handleSubmit(handlePlaceOrder)}>
-        <div className="flex container gap-6 mt-16">
-          <Card className="w-3/5 border-none">
-            <CardHeader>
-              <CardTitle>Customer details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="fname">First Name</Label>
-                  <Input
-                    id="fname"
-                    type="text"
-                    className="w-full"
-                    defaultValue={customer?.firstName}
-                    disabled
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="lname">Last Name</Label>
-                  <Input
-                    id="lname"
-                    type="text"
-                    className="w-full"
-                    defaultValue={customer?.lastName}
-                    disabled
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="text"
-                    className="w-full"
-                    defaultValue={customer?.email}
-                    disabled
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="name">Address</Label>
-                      <AddAdress customerId={customer?._id} />
-                    </div>
-
-                    <FormField
-                      name="address"
-                      control={customerForm.control}
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormControl>
-                              <RadioGroup
-                                onValueChange={field.onChange}
-                                className="grid grid-cols-2 gap-6 mt-2"
-                              >
-                                {customer?.addresses.map((address) => {
-                                  return (
-                                    <Card className="p-6" key={address.text}>
-                                      <div className="flex items-center space-x-2">
-                                        <FormControl>
-                                          <RadioGroupItem
-                                            value={address.text}
-                                            id={address.text}
-                                          />
-                                        </FormControl>
-                                        <Label
-                                          htmlFor={address.text}
-                                          className="leading-normal"
-                                        >
-                                          {address.text}
-                                        </Label>
-                                      </div>
-                                    </Card>
-                                  );
-                                })}
-                              </RadioGroup>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="grid gap-3">
-                  <Label>Payment Mode</Label>
-                  <FormField
-                    name="paymentMode"
-                    control={customerForm.control}
-                    render={({ field }) => {
-                      return (
-                        <FormItem>
-                          <FormControl>
-                            <RadioGroup
-                              onValueChange={field.onChange}
-                              className="flex gap-6"
-                            >
-                              {/* Card Payment - Disabled */}
-                              <div className="w-36 relative group">
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value={"card"}
-                                    id={"card"}
-                                    className="peer sr-only"
-                                    aria-label={"card"}
-                                    disabled
-                                  />
-                                </FormControl>
-                                <Label
-                                  htmlFor={"card"}
-                                  className="flex items-center justify-center rounded-md border-2 bg-gray-100 p-2 h-16 text-gray-400 cursor-not-allowed opacity-50 border-gray-300"
-                                >
-                                  <CreditCard size={"20"} />
-                                  <span className="ml-2">Card</span>
-                                </Label>
-                                {/* Tooltip */}
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                                  Feature currently not available
-                                  {/* Tooltip arrow */}
-                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                                </div>
-                              </div>
-
-                              {/* Cash Payment - Enabled */}
-                              <div className="w-36">
-                                <FormControl>
-                                  <RadioGroupItem
-                                    value={"cash"}
-                                    id={"cash"}
-                                    className="peer sr-only"
-                                    aria-label={"cash"}
-                                  />
-                                </FormControl>
-                                <Label
-                                  htmlFor={"cash"}
-                                  className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
-                                >
-                                  <Coins size={"20"} />
-                                  <span className="ml-2 text-md">Cash</span>
-                                </Label>
-                              </div>
-                            </RadioGroup>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="fname">Comment</Label>
-                  <FormField
-                    name="comment"
-                    control={customerForm.control}
-                    render={({ field }) => {
-                      return (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea {...field} />
-                          </FormControl>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <OrderSummary
-            isPlaceOrderPending={isPlaceOrderPending}
-            handleCouponCodeChange={(code) => {
-              chosenCouponCode.current = code;
-            }}
-          />
+    <div className="relative min-h-screen w-full py-12 px-4">
+      {/* Virat Kohli Background with Dark Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div 
+          className="w-full h-full bg-cover bg-center"
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1612872087720-bb876e2e67d1')",
+            backgroundSize: "cover",
+            backgroundPosition: "center"
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/90 to-gray-950/90"></div>
+      </div>
+      
+      <div className="container mx-auto relative z-10 max-w-6xl">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
+            Secure Checkout
+          </h1>
+          <p className="text-orange-200/80 mt-3">
+            Complete your purchase with confidence
+          </p>
         </div>
-      </form>
-    </Form>
+        
+        <Form {...customerForm}>
+          <form onSubmit={customerForm.handleSubmit(handlePlaceOrder)}>
+            <div className="flex flex-col lg:flex-row gap-6">
+              <Card className="w-full lg:w-3/5 bg-gray-900/80 backdrop-blur-sm border-orange-900/50">
+                <CardHeader>
+                  <CardTitle className="text-orange-300">Customer Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid gap-3">
+                        <Label className="text-orange-300">First Name</Label>
+                        <Input
+                          type="text"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          defaultValue={customer?.firstName}
+                          disabled
+                        />
+                      </div>
+                      <div className="grid gap-3">
+                        <Label className="text-orange-300">Last Name</Label>
+                        <Input
+                          type="text"
+                          className="bg-gray-800 border-gray-700 text-white"
+                          defaultValue={customer?.lastName}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid gap-3">
+                      <Label className="text-orange-300">Email</Label>
+                      <Input
+                        type="text"
+                        className="bg-gray-800 border-gray-700 text-white"
+                        defaultValue={customer?.email}
+                        disabled
+                      />
+                    </div>
+                    
+                    <div className="grid gap-3">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <Label className="text-orange-300">Address</Label>
+                          <AddAdress customerId={customer?._id} />
+                        </div>
+
+                        <FormField
+                          name="address"
+                          control={customerForm.control}
+                          render={({ field }) => {
+                            return (
+                              <FormItem>
+                                <FormControl>
+                                  <RadioGroup
+                                    onValueChange={field.onChange}
+                                    className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2"
+                                  >
+                                    {customer?.addresses.map((address) => {
+                                      return (
+                                        <div 
+                                          key={address.text} 
+                                          className="bg-gray-800/50 border border-orange-900/30 rounded-xl p-4 hover:border-orange-500/50 transition-colors"
+                                        >
+                                          <div className="flex items-start space-x-3">
+                                            <FormControl>
+                                              <RadioGroupItem
+                                                value={address.text}
+                                                id={address.text}
+                                                className="mt-1 text-orange-500"
+                                              />
+                                            </FormControl>
+                                            <Label
+                                              htmlFor={address.text}
+                                              className="leading-normal text-orange-200"
+                                            >
+                                              {address.text}
+                                            </Label>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </RadioGroup>
+                                </FormControl>
+                                <FormMessage className="text-orange-500" />
+                              </FormItem>
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid gap-3">
+                      <Label className="text-orange-300">Payment Mode</Label>
+                      <FormField
+                        name="paymentMode"
+                        control={customerForm.control}
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  className="flex flex-wrap gap-4"
+                                >
+                                  {/* Card Payment - Disabled */}
+                                  <div className="w-full sm:w-36 relative group">
+                                    <FormControl>
+                                      <RadioGroupItem
+                                        value={"card"}
+                                        id={"card"}
+                                        className="peer sr-only"
+                                        aria-label={"card"}
+                                        disabled
+                                      />
+                                    </FormControl>
+                                    <Label
+                                      htmlFor={"card"}
+                                      className="flex items-center justify-center rounded-xl border-2 bg-gray-800/50 p-3 h-16 text-orange-200/50 cursor-not-allowed"
+                                    >
+                                      <CreditCard size={"20"} />
+                                      <span className="ml-2">Card</span>
+                                    </Label>
+                                    {/* Tooltip */}
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                                      Feature currently not available
+                                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                    </div>
+                                  </div>
+
+                                  {/* Cash Payment - Enabled */}
+                                  <div className="w-full sm:w-36">
+                                    <FormControl>
+                                      <RadioGroupItem
+                                        value={"cash"}
+                                        id={"cash"}
+                                        className="peer sr-only"
+                                        aria-label={"cash"}
+                                      />
+                                    </FormControl>
+                                    <Label
+                                      htmlFor={"cash"}
+                                      className="flex items-center justify-center rounded-xl border-2 border-orange-600 bg-orange-900/20 p-3 h-16 hover:bg-orange-900/30 peer-data-[state=checked]:bg-orange-900/40 text-orange-300 cursor-pointer transition-colors"
+                                    >
+                                      <Coins size={"20"} />
+                                      <span className="ml-2 text-md">Cash</span>
+                                    </Label>
+                                  </div>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormMessage className="text-orange-500" />
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="grid gap-3">
+                      <Label className="text-orange-300">Order Notes</Label>
+                      <FormField
+                        name="comment"
+                        control={customerForm.control}
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormControl>
+                                <Textarea 
+                                  className="bg-gray-800 border-gray-700 text-white placeholder:text-orange-200/50 focus:border-orange-500"
+                                  {...field} 
+                                  placeholder="Special instructions or notes for your order"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <OrderSummary
+                isPlaceOrderPending={isPlaceOrderPending}
+                handleCouponCodeChange={(code) => {
+                  chosenCouponCode.current = code;
+                }}
+              />
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 };
 
