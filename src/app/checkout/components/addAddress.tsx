@@ -1,4 +1,3 @@
-// addAddress.tsx
 import { LoaderCircle, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { z } from 'zod';
@@ -39,8 +38,8 @@ const AddAdress = ({ customerId }: { customerId: string | undefined }) => {
     const { mutate, isPending } = useMutation({
         mutationKey: ['address', customerId],
         mutationFn: async (address: string) => {
-            if (!customerId) throw new Error("Customer ID is required");
-            return await addAddress(customerId, address);
+            // todo: put proper check on customerId.
+            return await addAddress(customerId!, address);
         },
         onSuccess: () => {
             addressForm.reset();
@@ -51,35 +50,33 @@ const AddAdress = ({ customerId }: { customerId: string | undefined }) => {
 
     const handleAddressAdd = (e: React.FormEvent<HTMLFormElement>) => {
         e.stopPropagation();
+
         return addressForm.handleSubmit((data: z.infer<typeof formSchema>) => {
             mutate(data.address);
         })(e);
     };
 
+    // todo: Display error if any (useMutation -> isError)
     return (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-                <Button 
-                    size={'sm'} 
-                    variant={'outline'}
-                    className="text-orange-400 border-orange-500/30 hover:bg-orange-900/20 hover:text-orange-300"
-                >
+                <Button size={'sm'} variant={'link'}>
                     <Plus size={'16'} />
                     <span className="ml-2">Add New Address</span>
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-gray-900 border-orange-800/50">
+            <DialogContent className="sm:max-w-[425px]">
                 <Form {...addressForm}>
                     <form onSubmit={handleAddressAdd}>
                         <DialogHeader>
-                            <DialogTitle className="text-orange-300">Add Address</DialogTitle>
-                            <DialogDescription className="text-orange-200/80">
+                            <DialogTitle>Add Address</DialogTitle>
+                            <DialogDescription>
                                 We can save your address for next time order.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4 py-4">
                             <div>
-                                <Label htmlFor="address" className="text-orange-300">Address</Label>
+                                <Label htmlFor="address">Address</Label>
                                 <FormField
                                     name="address"
                                     control={addressForm.control}
@@ -87,12 +84,9 @@ const AddAdress = ({ customerId }: { customerId: string | undefined }) => {
                                         return (
                                             <FormItem>
                                                 <FormControl>
-                                                    <Textarea 
-                                                        className="mt-2 bg-gray-800 border-gray-700 text-white placeholder:text-orange-200/50 focus:border-orange-500"
-                                                        {...field} 
-                                                    />
+                                                    <Textarea className="mt-2" {...field} />
                                                 </FormControl>
-                                                <FormMessage className="text-orange-500" />
+                                                <FormMessage />
                                             </FormItem>
                                         );
                                     }}
@@ -100,18 +94,14 @@ const AddAdress = ({ customerId }: { customerId: string | undefined }) => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button 
-                                type="submit" 
-                                disabled={isPending}
-                                className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900"
-                            >
+                            <Button type="submit" disabled={isPending}>
                                 {isPending ? (
                                     <span className="flex items-center gap-2">
                                         <LoaderCircle className="animate-spin" />
                                         <span>Please wait...</span>
                                     </span>
                                 ) : (
-                                    'Save Address'
+                                    'Save changes'
                                 )}
                             </Button>
                         </DialogFooter>
