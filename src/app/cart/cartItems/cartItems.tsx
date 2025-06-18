@@ -1,4 +1,3 @@
-// cartItems.tsx
 'use client';
 import React, { useEffect } from 'react';
 import CartItem from './cartItem';
@@ -31,44 +30,34 @@ const CartItems = () => {
 
     if (!cart.length) {
         return (
-            <div className="flex flex-col items-center justify-center py-16 bg-gray-900/80 backdrop-blur-sm rounded-xl border border-orange-900/50">
-                <ShoppingCart className="w-16 h-16 text-orange-400 mb-4" />
-                <p className="text-orange-200/80 text-lg mb-4">
-                    Your cart is empty!
+            <div className="flex items-center gap-2">
+                <ShoppingCart />
+                <p className="text-gray-500">
+                    Your cart is empty!{' '}
+                    <Link
+                        className="text-orange-500"
+                        href={`/?shopId=${searchParams.get('shopId')}`}>
+                        continue shopping?
+                    </Link>
                 </p>
-                <Link
-                    className="text-orange-400 hover:text-orange-300 font-medium flex items-center gap-2"
-                    href={`/?shopId=${searchParams.get('shopId')}`}
-                >
-                    Continue shopping
-                    <ArrowRight size={16} />
-                </Link>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="space-y-4">
-                {cart.map((cartItem) => (
-                    <CartItem key={cartItem.hash} item={cartItem} />
-                ))}
-            </div>
-            
-            <div className="mt-6 p-6 bg-gray-900/80 backdrop-blur-sm rounded-xl border border-orange-900/50">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <p className="text-orange-300/80">Total</p>
-                        <span className="font-bold text-2xl text-white">₹{finalTotal}</span>
-                    </div>
-                    <Button
-                        className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white font-medium px-6 py-3 rounded-lg transition-colors shadow-lg hover:shadow-xl"
-                        onClick={() => router.push(`/checkout/?shopId=${searchParams.get('shopId')}`)}
-                    >
-                        Proceed to Checkout
-                        <ArrowRight size={18} className="ml-2" />
-                    </Button>
-                </div>
+        <div className="flex flex-col gap-8 ">
+            {cart.map((cartItem) => (
+                <CartItem key={cartItem.hash} item={cartItem} />
+            ))}
+            <div className="flex justify-between items-center">
+                <span className="font-bold text-xl">&#8377;{finalTotal}</span>
+                <Button
+                    onClick={() =>
+                        router.push(`/checkout/?shopId=${searchParams.get('shopId')}`)
+                    }>
+                    Checkout
+                    <ArrowRight size={16} className="ml-2" />
+                </Button>
             </div>
         </div>
     );
