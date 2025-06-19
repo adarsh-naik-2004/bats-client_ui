@@ -2,19 +2,29 @@ import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import CustomerForm from "./components/customerForm";
 
-export default async function Checkout({ searchParams }: { searchParams: Record<string, string | string[]> }) {
+export default async function Checkout({
+  searchParams,
+}: {
+  searchParams: Promise<{ shopId?: string; [key: string]: string | string[] | undefined }>;
+}) {
   const session = await getSession();
+
+  const resolvedSearchParams = await searchParams;
 
   const sParams = new URLSearchParams();
 
-  Object.entries(searchParams).forEach(([key, value]) => {
+  // Append each key-value pair from searchParams to URLSearchParams
+  Object.entries(resolvedSearchParams).forEach(([key, value]) => {
     if (typeof value === "string") {
       sParams.append(key, value);
     }
   });
 
   const existingQueryString = sParams.toString();
+
   sParams.append("return-to", `/checkout?${existingQueryString}`);
+
+  // /login?return-to=/checkout?existingQueryString
 
   if (!session) {
     redirect(`/login?${sParams}`);
