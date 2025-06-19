@@ -2,11 +2,11 @@ import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import CustomerForm from "./components/customerForm";
 
-export default async function Checkout({
-  searchParams,
-}: {
-  searchParams: { shopId?: string; [key: string]: string | string[] | undefined };
-}) {
+interface CheckoutPageProps {
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+export default async function Checkout({ searchParams }: CheckoutPageProps) {
   const session = await getSession();
 
   const sParams = new URLSearchParams();
