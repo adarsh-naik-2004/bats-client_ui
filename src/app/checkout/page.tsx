@@ -2,15 +2,16 @@ import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import CustomerForm from "./components/customerForm";
 
-interface CheckoutPageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
-export default async function Checkout({ searchParams }: CheckoutPageProps) {
+export default async function Checkout({
+  searchParams,
+}: {
+  searchParams: { shopId?: string; [key: string]: string | string[] | undefined };
+}) {
   const session = await getSession();
 
   const sParams = new URLSearchParams();
 
+  // Append each key-value pair from searchParams to URLSearchParams
   Object.entries(searchParams).forEach(([key, value]) => {
     if (typeof value === "string") {
       sParams.append(key, value);
@@ -24,13 +25,5 @@ export default async function Checkout({ searchParams }: CheckoutPageProps) {
     redirect(`/login?${sParams}`);
   }
 
-  return (
-    <section className="bg-gradient-to-b from-gray-900 to-gray-950 min-h-screen py-12 px-4">
-      <div className="container mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-2">Checkout</h1>
-        <p className="text-gray-400 mb-8">Complete your order details</p>
-        <CustomerForm />
-      </div>
-    </section>
-  );
+  return <CustomerForm />;
 }
