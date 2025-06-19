@@ -1,3 +1,4 @@
+// OrderSummary.tsx
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,9 +11,7 @@ import { LoaderCircle } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
-// todo: Move this to the server, and calulate according to your business rules.
 const TAXES_PERCENTAGE = 18;
-// todo: Move this to the server (Order service).
 const DELIVERY_CHARGES = 100;
 
 const OrderSummary = ({
@@ -55,8 +54,7 @@ const OrderSummary = ({
         return subTotal + taxesAmount + DELIVERY_CHARGES;
     }, [subTotal, taxesAmount]);
 
-    // todo: display error isError, error
-    const { mutate } = useMutation({
+    const { mutate, isPending: isCouponValidating } = useMutation({
         mutationKey: ['couponCode'],
         mutationFn: async (): Promise<{ valid: boolean; discount: number }> => {
             if (!couponCodeRef.current) {
@@ -92,69 +90,83 @@ const OrderSummary = ({
 
     const handleCouponValidation = (e: React.MouseEvent) => {
         e.preventDefault();
-
         mutate();
     };
 
     return (
-        <Card className="w-2/5 border-none h-auto self-start">
+        <Card className="w-full lg:w-2/5 bg-gray-800/50 backdrop-blur-lg border-gray-700 shadow-xl h-auto self-start">
             <CardHeader>
-                <CardTitle>Order summary</CardTitle>
+                <CardTitle className="text-white">Order Summary</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 pt-6">
-                <div className="flex items-center justify-between">
-                    <span>Subtotal</span>
-                    <span className="font-bold">₹{subTotal}</span>
+            <CardContent className="grid gap-4 pt-2">
+                <div className="space-y-3 py-4 border-b border-gray-700">
+                    <div className="flex items-center justify-between text-gray-300">
+                        <span>Subtotal</span>
+                        <span>₹{subTotal}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-gray-300">
+                        <span>Taxes ({TAXES_PERCENTAGE}%)</span>
+                        <span>₹{taxesAmount}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-gray-300">
+                        <span>Delivery charges</span>
+                        <span>₹{DELIVERY_CHARGES}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-gray-300">
+                        <span>Discount</span>
+                        <span className="text-green-400">-₹{discountAmount}</span>
+                    </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <span>Taxes</span>
-                    <span className="font-bold">₹{taxesAmount}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                    <span>Delivery charges</span>
-                    <span className="font-bold">₹{DELIVERY_CHARGES}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                    <span>Discount</span>
-                    <span className="font-bold">₹{discountAmount}</span>
-                </div>
-                <hr />
-                <div className="flex items-center justify-between">
-                    <span className="font-bold">Order total</span>
+                
+                <div className="flex items-center justify-between py-4">
+                    <span className="font-bold text-lg text-white">Order total</span>
                     <span className="font-bold flex flex-col items-end">
-                        <span className={discountPercentage ? 'line-through text-gray-400' : ''}>
+                        <span className={discountPercentage ? 'line-through text-gray-400 text-sm' : 'text-white text-xl'}>
                             ₹{grandWithoutDiscountTotal}
                         </span>
                         {discountPercentage ? (
-                            <span className="text-green-700">${grandWithDiscountTotal}</span>
+                            <span className="text-green-400 text-xl">₹{grandWithDiscountTotal}</span>
                         ) : null}
                     </span>
                 </div>
-                {discountError && <div className="text-red-500">{discountError}</div>}
-                <div className="flex items-center gap-4">
+                
+                {discountError && <div className="text-red-400 text-sm">{discountError}</div>}
+                
+                <div className="flex items-center gap-2 mt-2">
                     <Input
                         id="coupon"
                         name="code"
                         type="text"
-                        className="w-full"
-                        placeholder="Coupon code"
+                        className="w-full bg-gray-700 border-gray-600 text-white placeholder:text-gray-500"
+                        placeholder="Enter coupon code"
                         ref={couponCodeRef}
                     />
-                    {/* todo: add loading */}
-                    <Button onClick={handleCouponValidation} variant={'outline'}>
-                        Apply
+                    <Button 
+                        onClick={handleCouponValidation} 
+                        variant={'outline'}
+                        className="bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                        disabled={isCouponValidating}
+                    >
+                        {isCouponValidating ? (
+                            <LoaderCircle className="animate-spin h-4 w-4" />
+                        ) : (
+                            'Apply'
+                        )}
                     </Button>
                 </div>
 
-                <div className="text-right mt-6">
-                    <Button disabled={isPlaceOrderPending}>
+                <div className="text-right mt-6 pt-4 border-t border-gray-700">
+                    <Button 
+                        disabled={isPlaceOrderPending}
+                        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg px-6 py-3 rounded-lg text-base"
+                    >
                         {isPlaceOrderPending ? (
-                            <span className="flex items-center gap-2">
+                            <span className="flex items-center justify-center gap-2">
                                 <LoaderCircle className="animate-spin" />
-                                <span>Please wait...</span>
+                                <span>Processing Order...</span>
                             </span>
                         ) : (
-                            <span>Place order</span>
+                            <span>Place Order</span>
                         )}
                     </Button>
                 </div>

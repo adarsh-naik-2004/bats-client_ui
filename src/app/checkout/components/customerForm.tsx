@@ -1,3 +1,4 @@
+// CustomerForm.tsx
 "use client";
 import React from "react";
 import { z } from "zod";
@@ -84,8 +85,11 @@ const CustomerForm = () => {
   });
 
   if (isLoading) {
-    // todo: use Spinner/Loader or Shadcn Skeleton
-    return <h3>Loading...</h3>;
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+      </div>
+    );
   }
 
   const handlePlaceOrder = (data: z.infer<typeof formSchema>) => {
@@ -103,46 +107,47 @@ const CustomerForm = () => {
       address: data.address,
       paymentMode: data.paymentMode,
     };
-    console.log("Order data:", orderData);
     mutate(orderData);
   };
 
   return (
     <Form {...customerForm}>
       <form onSubmit={customerForm.handleSubmit(handlePlaceOrder)}>
-        <div className="flex container gap-6 mt-16">
-          <Card className="w-3/5 border-none">
+        <div className="flex container gap-6 mt-8 flex-col lg:flex-row">
+          <Card className="w-full lg:w-3/5 bg-gray-800/50 backdrop-blur-lg border-gray-700 shadow-xl">
             <CardHeader>
-              <CardTitle>Customer details</CardTitle>
+              <CardTitle className="text-white">Customer details</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-6">
-                <div className="grid gap-3">
-                  <Label htmlFor="fname">First Name</Label>
-                  <Input
-                    id="fname"
-                    type="text"
-                    className="w-full"
-                    defaultValue={customer?.firstName}
-                    disabled
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid gap-3">
+                    <Label htmlFor="fname" className="text-gray-300">First Name</Label>
+                    <Input
+                      id="fname"
+                      type="text"
+                      className="w-full bg-gray-700 border-gray-600 text-white"
+                      defaultValue={customer?.firstName}
+                      disabled
+                    />
+                  </div>
+                  <div className="grid gap-3">
+                    <Label htmlFor="lname" className="text-gray-300">Last Name</Label>
+                    <Input
+                      id="lname"
+                      type="text"
+                      className="w-full bg-gray-700 border-gray-600 text-white"
+                      defaultValue={customer?.lastName}
+                      disabled
+                    />
+                  </div>
                 </div>
                 <div className="grid gap-3">
-                  <Label htmlFor="lname">Last Name</Label>
-                  <Input
-                    id="lname"
-                    type="text"
-                    className="w-full"
-                    defaultValue={customer?.lastName}
-                    disabled
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-gray-300">Email</Label>
                   <Input
                     id="email"
                     type="text"
-                    className="w-full"
+                    className="w-full bg-gray-700 border-gray-600 text-white"
                     defaultValue={customer?.email}
                     disabled
                   />
@@ -150,7 +155,7 @@ const CustomerForm = () => {
                 <div className="grid gap-3">
                   <div>
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="name">Address</Label>
+                      <Label htmlFor="name" className="text-gray-300">Address</Label>
                       <AddAdress customerId={customer?._id} />
                     </div>
 
@@ -163,21 +168,25 @@ const CustomerForm = () => {
                             <FormControl>
                               <RadioGroup
                                 onValueChange={field.onChange}
-                                className="grid grid-cols-2 gap-6 mt-2"
+                                className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4"
                               >
                                 {customer?.addresses.map((address) => {
                                   return (
-                                    <Card className="p-6" key={address.text}>
-                                      <div className="flex items-center space-x-2">
+                                    <Card 
+                                      key={address.text} 
+                                      className="bg-gray-800/50 border-gray-700 p-4 hover:border-orange-500 transition-colors"
+                                    >
+                                      <div className="flex items-start space-x-3">
                                         <FormControl>
                                           <RadioGroupItem
                                             value={address.text}
                                             id={address.text}
+                                            className="mt-1 text-orange-500 border-gray-500"
                                           />
                                         </FormControl>
                                         <Label
                                           htmlFor={address.text}
-                                          className="leading-normal"
+                                          className="leading-normal text-gray-300"
                                         >
                                           {address.text}
                                         </Label>
@@ -187,7 +196,7 @@ const CustomerForm = () => {
                                 })}
                               </RadioGroup>
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-400" />
                           </FormItem>
                         );
                       }}
@@ -195,7 +204,7 @@ const CustomerForm = () => {
                   </div>
                 </div>
                 <div className="grid gap-3">
-                  <Label>Payment Mode</Label>
+                  <Label className="text-gray-300">Payment Mode</Label>
                   <FormField
                     name="paymentMode"
                     control={customerForm.control}
@@ -205,7 +214,7 @@ const CustomerForm = () => {
                           <FormControl>
                             <RadioGroup
                               onValueChange={field.onChange}
-                              className="flex gap-6"
+                              className="flex flex-wrap gap-4"
                             >
                               {/* Card Payment - Disabled */}
                               <div className="w-36 relative group">
@@ -220,15 +229,13 @@ const CustomerForm = () => {
                                 </FormControl>
                                 <Label
                                   htmlFor={"card"}
-                                  className="flex items-center justify-center rounded-md border-2 bg-gray-100 p-2 h-16 text-gray-400 cursor-not-allowed opacity-50 border-gray-300"
+                                  className="flex items-center justify-center rounded-lg border-2 bg-gray-800 p-4 h-16 text-gray-500 cursor-not-allowed opacity-60 border-gray-600"
                                 >
                                   <CreditCard size={"20"} />
                                   <span className="ml-2">Card</span>
                                 </Label>
-                                {/* Tooltip */}
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10 border border-gray-700">
                                   Feature currently not available
-                                  {/* Tooltip arrow */}
                                   <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                                 </div>
                               </div>
@@ -245,7 +252,7 @@ const CustomerForm = () => {
                                 </FormControl>
                                 <Label
                                   htmlFor={"cash"}
-                                  className="flex items-center justify-center rounded-md border-2 bg-white p-2 h-16 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                                  className="flex items-center justify-center rounded-lg border-2 bg-gray-800 p-4 h-16 hover:bg-gray-700 hover:text-white peer-data-[state=checked]:border-orange-500 [&:has([data-state=checked])]:border-orange-500 cursor-pointer text-gray-300 transition-colors"
                                 >
                                   <Coins size={"20"} />
                                   <span className="ml-2 text-md">Cash</span>
@@ -253,14 +260,14 @@ const CustomerForm = () => {
                               </div>
                             </RadioGroup>
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-400" />
                         </FormItem>
                       );
                     }}
                   />
                 </div>
                 <div className="grid gap-3">
-                  <Label htmlFor="fname">Comment</Label>
+                  <Label htmlFor="fname" className="text-gray-300">Comment (Optional)</Label>
                   <FormField
                     name="comment"
                     control={customerForm.control}
@@ -268,7 +275,11 @@ const CustomerForm = () => {
                       return (
                         <FormItem>
                           <FormControl>
-                            <Textarea {...field} />
+                            <Textarea 
+                              {...field} 
+                              className="bg-gray-700 border-gray-600 text-white focus:border-orange-500"
+                              placeholder="Any special instructions?"
+                            />
                           </FormControl>
                         </FormItem>
                       );
