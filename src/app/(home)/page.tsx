@@ -2,8 +2,6 @@ import { Suspense } from 'react';
 import ProductList from './components/product-list';
 import StoreSelect from '../../components/custom/store-select';
 import { Store } from '@/lib/types';
-import { Sparkles, Star, Zap } from 'lucide-react';
-import AboutSection from './components/about-us';
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ shopId?: string }> }) {
   const resolvedSearchParams = await searchParams;
@@ -13,31 +11,20 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
     <>
-      <section className="relative min-h-screen bg-gray-900 overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1612872087720-bb876e2e67d1')] bg-cover bg-center opacity-20"></div>
+      <section className="relative min-h-screen bg-gray-900 overflow-hidden z-0">
+        <div className="absolute inset-0 z-0 bg-[url('/kohli.jpg')] bg-cover bg-center opacity-40"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/90 to-gray-900/70 z-0"></div>
-        
-        <div className="absolute top-20 left-10 animate-float z-10">
-          <Sparkles className="text-orange-400 w-8 h-8 opacity-60" />
-        </div>
-        <div className="absolute top-32 right-20 animate-float-delayed z-10">
-          <Star className="text-orange-300 w-6 h-6 opacity-60" />
-        </div>
-        <div className="absolute bottom-32 left-20 animate-bounce-slow z-10">
-          <Zap className="text-orange-400 w-10 h-10 opacity-40" />
-        </div>
 
         <div className="container mx-auto flex flex-col items-center text-center py-24 md:py-32 px-6 relative z-20">
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 bg-gray-800 backdrop-blur-sm border border-orange-500/30 rounded-full px-6 py-2 mb-8">
-              <Sparkles className="text-orange-400 w-4 h-4" />
               <span className="text-orange-300 text-sm font-medium">New Collection Available</span>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             </div>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black leading-tight tracking-tighter text-white mb-6 animate-fade-in-up animation-delay-200">
-            Elite Cricket Gear,
+            Elite Cricket Gear
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 animate-gradient-x">
               Engineered for Champions
@@ -90,10 +77,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
             <ProductList searchParams={{ shopId: resolvedSearchParams.shopId ?? shops.data[0]?.id.toString() ?? '' }} />
           </div>
         </Suspense>
-      </section>
-
-      <section id="about" className="scroll-mt-24 bg-gray-900">
-        <AboutSection />
       </section>
     </>
   );

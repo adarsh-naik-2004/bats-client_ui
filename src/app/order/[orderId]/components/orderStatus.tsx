@@ -49,7 +49,7 @@ const OrderStatus = ({ orderId }: { orderId: string }) => {
       initialStep={0}
       steps={steps}
       variant="circle-alt"
-      className="py-8 dark:bg-muted dark:border dark:border-border rounded-xl"
+      className="py-8 bg-gray-900 border border-orange-500/20 rounded-xl text-orange-200"
     >
       {steps.map(({ label, icon }) => (
         <Step key={label} label={label} icon={icon} checkIcon={icon} />
