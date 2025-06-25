@@ -7,11 +7,12 @@ import {
 } from '@/components/ui/card';
 import OrderStatus from './components/orderStatus';
 import { Separator } from '@/components/ui/separator';
-import { Banknote, Coins, LayoutDashboard, Calendar, MessageCircle, ShoppingBasket, Package } from 'lucide-react';
+import { Coins, LayoutDashboard, Calendar, MessageCircle, ShoppingBasket, Package, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cookies } from 'next/headers';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 interface Accessory {
   id: string;
@@ -63,7 +64,7 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
   const resolvedParams = await params;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_GATEWAY}/orders/${resolvedParams.orderId}?fields=cart,address,paymentStatus,paymentMode,total,createdAt,comment,orderStatus,customerId`,
+    `${process.env.NEXT_PUBLIC_API_GATEWAY}/orders/${resolvedParams.orderId}?fields=cart,address,paymentStatus,paymentMode,total,taxes,deliveryCharges,discount,createdAt,comment,orderStatus,customerId`,
     {
       headers: {
         Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
@@ -90,8 +91,21 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
   };
 
   return (
-    <div className="container mt-6 flex flex-col gap-6 bg-gray-900 text-white min-h-screen pb-10">
-      <Card className="bg-gray-800 border border-orange-500/20 shadow-md">
+    <div className="container flex flex-col gap-6 bg-gray-900 text-white min-h-screen py-8">
+      {/* Back Button */}
+      <div className="px-4 md:px-0 mb-4">
+        <Link href="/orders">
+          <Button 
+            variant="ghost" 
+            className="text-orange-300 hover:text-orange-400 flex items-center gap-2"
+          >
+            <ArrowLeft size={18} />
+            Back to Orders
+          </Button>
+        </Link>
+      </div>
+
+      <Card className="bg-gray-800 border border-orange-500/20 shadow-md mx-4 md:mx-0">
         <CardHeader>
           <CardTitle className="text-xl text-orange-300">Order</CardTitle>
           <CardDescription className="text-orange-100/60">
@@ -103,9 +117,8 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
         </CardContent>
       </Card>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 px-4 md:px-0">
         <div className="lg:w-2/3 space-y-6">
-          {/* Order Items Card */}
           <Card className="bg-gray-800 border border-orange-500/20">
             <CardHeader className="p-4">
               <CardTitle className="text-lg text-orange-300 flex items-center gap-2">
@@ -204,12 +217,6 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
                 <Package size={18} className="text-orange-400" />
                 <span className="font-medium text-orange-100">Status:</span>
                 <span className="capitalize">{order.orderStatus}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Banknote size={18} className="text-orange-400" />
-                <span className="font-medium text-orange-100">Payment status:</span>
-                <span className="capitalize">{order.paymentStatus}</span>
               </div>
 
               <div className="flex items-center gap-2">
