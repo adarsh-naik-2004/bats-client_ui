@@ -26,13 +26,18 @@ const HeaderClient = ({ session }: { session: unknown }) => {
 
   return (
     <div className="flex items-center gap-x-3 sm:gap-x-4 md:gap-x-5">
-      {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center space-x-6">
         {["Home", "Products", "Orders"].map((item) => (
           <Link
             key={item}
             className="relative text-orange-200 hover:text-white font-medium transition-all duration-300 group text-base"
-            href={item === "Home" ? "/" : `#${item.toLowerCase()}`}
+            href={
+                  item === "Home"
+                    ? "/"
+                    : item === "Orders"
+                    ? "/orders"
+                    : "#products"
+                }
           >
             {item}
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-400 transition-all duration-300 group-hover:w-full"></span>
@@ -40,11 +45,10 @@ const HeaderClient = ({ session }: { session: unknown }) => {
         ))}
       </nav>
 
-      {/* Mobile Menu Button */}
       <Button
         variant="ghost"
         size="sm"
-        className="md:hidden p-2 text-orange-200 relative z-[9999]" // Keep this high so button is clickable
+        className="md:hidden p-2 text-orange-200 relative z-[9999]"
         onClick={() => setMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? (
@@ -79,29 +83,25 @@ const HeaderClient = ({ session }: { session: unknown }) => {
         )}
       </div>
 
-      {/* Mobile Menu Overlay (Click to close background) */}
       {isMenuOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/70 z-[9998]" // z-index lower than menu, but higher than page content
+          className="md:hidden fixed inset-0 bg-black/70 z-[9998]"
           onClick={() => setMenuOpen(false)}
         ></div>
       )}
 
-      {/* Mobile Navigation Panel */}
       <div
         className={`md:hidden fixed top-0 left-0 h-full w-4/5 max-w-xs z-[9999] shadow-2xl transform transition-transform duration-300 ease-in-out overflow-hidden ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         style={{ backgroundColor: "#0f172a" }}
       >
-        {/* Inner content of the mobile menu */}
         <div className="px-6 py-8 h-full flex flex-col bg-gray-900">
           {" "}
-          {/* Explicitly setting bg-gray-900 here again for redundancy/specificity */}
           <div className="flex justify-between items-center mb-10">
             <div className="flex items-center space-x-2">
               <span className="text-xl font-bold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
-                Elite Cricket
+                Cricstore
               </span>
             </div>
             <Button
@@ -117,7 +117,13 @@ const HeaderClient = ({ session }: { session: unknown }) => {
             {["Home", "Products", "Orders"].map((item) => (
               <Link
                 key={item}
-                href={item === "Home" ? "/" : `#${item.toLowerCase()}`}
+                href={
+                  item === "Home"
+                    ? "/"
+                    : item === "Orders"
+                    ? "/orders"
+                    : "#products"
+                }
                 className="text-orange-200 hover:text-white font-medium text-lg transition-colors duration-300 py-3 border-b border-gray-600/50 hover:border-orange-400/50"
                 onClick={() => setMenuOpen(false)}
               >

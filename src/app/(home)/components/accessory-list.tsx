@@ -26,14 +26,13 @@ const AccessoryList = ({
 
     return (
         <section className="mt-8">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="w-1 h-8 bg-gradient-to-b from-orange-500 to-orange-700 rounded-full"></div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-700 bg-clip-text text-transparent">
+            <div className="flex items-center gap-3 mb-5">
+                <div className="w-1 h-7 bg-gradient-to-b from-orange-500 to-orange-700 rounded-full"></div>
+                <h3 className="font-bold text-lg bg-gradient-to-r from-orange-500 to-orange-700 bg-clip-text text-transparent">
                     Premium Accessories
                 </h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-orange-700/50 to-transparent"></div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
                 {accessorys.map((accessory, index) => {
                     return (
                         <div

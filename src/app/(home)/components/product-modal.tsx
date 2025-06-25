@@ -106,34 +106,34 @@ const ProductModal = ({ product }: { product: Product }) => {
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
                 <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white font-medium px-6 py-2 rounded-lg transition-colors"
+                    size="sm" 
+                    className="bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white px-5 py-2 rounded-lg transition-colors text-base"
                 >
-                    Customize Product
+                    Customize
                 </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 rounded-lg border bg-gray-800 border-orange-900">
+            <DialogContent className="max-w-4xl p-0 rounded-2xl border bg-gray-800 border-orange-900">
                 <div className="flex flex-col lg:flex-row">
-                    <div className="w-full lg:w-2/5 bg-gradient-to-b from-orange-900/20 to-orange-800/20 p-8 flex items-center justify-center">
+                    <div className="w-full lg:w-2/5 bg-gradient-to-b from-orange-900/10 to-orange-800/10 p-8 flex items-center justify-center">
                         <Image 
                             src={product.image} 
-                            width={300} 
-                            height={300} 
+                            width={240} 
+                            height={240} 
                             alt={product.name} 
                             className="object-contain"
                         />
                     </div>
                     
-                    <div className="w-full lg:w-3/5 p-8">
+                    <div className="w-full lg:w-3/5 p-6">
                         <div className="mb-6">
-                            <h3 className="text-2xl font-bold text-white mb-2">{product.name}</h3>
-                            <p className="text-orange-200/80">{product.description}</p>
+                            <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
+                            <p className="text-orange-200/80 text-sm">{product.description}</p>
                         </div>
 
-                        <div className="space-y-6 mb-8">
+                        <div className="space-y-6 mb-6">
                             {Object.entries(product.category.priceConfiguration).map(([key, value]) => (
                                 <div key={key}>
-                                    <h4 className="text-base font-semibold text-orange-300 mb-3">{key}</h4>
+                                    <h4 className="text-sm font-semibold text-orange-300 mb-3">{key}</h4>
                                     <RadioGroup
                                         defaultValue={value.availableOptions[0]}
                                         onValueChange={(data) => handleRadioChange(key, data)}
@@ -144,7 +144,7 @@ const ProductModal = ({ product }: { product: Product }) => {
                                                 <RadioGroupItem value={option} id={option} className="peer sr-only" />
                                                 <Label
                                                     htmlFor={option}
-                                                    className="flex items-center justify-center rounded-md border-2 border-gray-700 bg-gray-800 p-3 text-sm font-medium hover:border-orange-500 peer-data-[state=checked]:border-orange-600 peer-data-[state=checked]:bg-orange-900/30 cursor-pointer transition-colors text-orange-200/80"
+                                                    className="flex items-center justify-center rounded-lg border border-gray-700 bg-gray-800 p-3 text-sm hover:border-orange-500 peer-data-[state=checked]:border-orange-600 peer-data-[state=checked]:bg-orange-900/20 cursor-pointer transition-colors text-orange-200/80"
                                                 >
                                                     {option}
                                                 </Label>
@@ -173,22 +173,22 @@ const ProductModal = ({ product }: { product: Product }) => {
 
                         <div className="flex items-center justify-between pt-6 border-t border-orange-900">
                             <div>
-                                <span className="text-sm text-orange-300/80">Total Price</span>
-                                <div className="text-2xl font-bold text-white">
+                                <span className="text-xs text-orange-300/80">Total</span>
+                                <div className="text-xl font-bold text-white">
                                     ₹{totalPrice.toLocaleString()}
                                 </div>
                             </div>
                             <Button
-                                className={`px-6 py-2 font-medium rounded-lg transition-colors ${
+                                className={`px-5 py-2 rounded-lg transition-colors text-base ${
                                     alreadyHasInCart 
-                                        ? 'bg-gray-600 cursor-not-allowed text-white' 
-                                        : 'bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900 text-white'
+                                        ? 'bg-gray-600 cursor-not-allowed' 
+                                        : 'bg-gradient-to-r from-orange-600 to-orange-800 hover:from-orange-700 hover:to-orange-900'
                                 }`}
                                 disabled={alreadyHasInCart}
                                 onClick={() => handleAddToCart(product)}
                             >
                                 <ShoppingCart size={18} className="mr-2" />
-                                {alreadyHasInCart ? 'Already in Cart' : 'Add to Cart'}
+                                {alreadyHasInCart ? 'In Cart' : 'Add to Cart'}
                             </Button>
                         </div>
                     </div>

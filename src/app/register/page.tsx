@@ -41,12 +41,11 @@ export default function SignUpPage() {
 
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center p-4">
-            {/* Virat Kohli Background with Dark Overlay */}
             <div className="absolute inset-0 z-0">
                 <div 
                     className="w-full h-full bg-cover bg-center"
                     style={{ 
-                        backgroundImage: "url('/kohli.jpg')",
+                        backgroundImage: "url('/kohli_5.webp')",
                         backgroundSize: "cover",
                         backgroundPosition: "center"
                     }}
@@ -54,36 +53,11 @@ export default function SignUpPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-gray-900/90 to-gray-950/90"></div>
             </div>
             
-            {/* Decorative elements */}
-            <div className="absolute top-10 left-10 animate-float z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 text-orange-400 opacity-60">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-            </div>
-            
-            <div className="absolute bottom-20 right-10 animate-float-delayed z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-orange-400 opacity-60">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-            </div>
-            
-            <div className="absolute top-1/4 right-1/4 animate-bounce-slow z-10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-orange-400 opacity-40">
-                    <path d="m3 11 18-5v12L3 14v-3z"/>
-                    <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>
-                </svg>
-            </div>
-            
             <div className="relative z-10 w-full max-w-lg">
                 <div className="text-center mb-10">
                     <div className="flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 text-orange-500">
-                            <path d="M12 4v16m8-8H4"/>
-                        </svg>
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent">
-                            Elite Cricket
+                            Cricstore
                         </h1>
                     </div>
                     <p className="text-orange-200/80 mt-3 max-w-md mx-auto">
