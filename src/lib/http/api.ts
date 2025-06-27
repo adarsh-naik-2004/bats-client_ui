@@ -10,7 +10,6 @@ export const api = axios.create({
     },
 });
 
-
 export const getCustomer = () => api.get<Customer>(`/customer`);
 export const addAddress = (customerId: string, address: string) => api.patch(`/customer/addresses/${customerId}`, { address,});
 export const verifyCoupon = (data: CouponCodeData) => api.post(`/coupons/verify`, data);

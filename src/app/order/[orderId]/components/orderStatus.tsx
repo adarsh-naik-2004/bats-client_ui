@@ -1,44 +1,82 @@
-'use client';
-import { Step, StepItem, Stepper, useStepper } from '@/components/stepper';
-import { getSingleOrder } from '@/lib/http/api';
-import { Order } from '@/lib/types';
-import { useQuery } from '@tanstack/react-query';
-import { CheckCheck, FileCheck, Microwave, Package, PackageCheck } from 'lucide-react';
-import React from 'react';
-
+"use client";
+import { Step, StepItem, Stepper, useStepper } from "@/components/stepper";
+import {
+  CheckCheck,
+  FileCheck,
+  Microwave,
+  Package,
+  PackageCheck,
+} from "lucide-react";
+import React from "react";
+import { io } from "socket.io-client";
 const steps = [
-  { label: 'Received', icon: FileCheck, description: 'We are confirming your order' },
-  { label: 'Confirmed', icon: Package, description: 'We have started preparing your order' },
-  { label: 'Prepared', icon: Microwave, description: 'Ready for the pickup' },
-  { label: 'Out for delivery', icon: PackageCheck, description: 'Driver is on the way' },
-  { label: 'Delivered', icon: CheckCheck, description: 'Order completed' },
+  {
+    label: "Received",
+    icon: FileCheck,
+    description: "We are confirming your order",
+  },
+  {
+    label: "Confirmed",
+    icon: Package,
+    description: "We have started preparing your order",
+  },
+  { label: "Prepared", icon: Microwave, description: "Ready for the pickup" },
+  {
+    label: "Out for delivery",
+    icon: PackageCheck,
+    description: "Driver is on the way",
+  },
+  { label: "Delivered", icon: CheckCheck, description: "Order completed" },
 ] satisfies StepItem[];
 
 const statusMapping = {
   received: 0,
   confirmed: 1,
   prepared: 2,
-  out_for_deliver: 3,
+  out_for_delivery: 3,
   delivered: 4,
 } as { [key: string]: number };
 
 const StepperChanger = ({ orderId }: { orderId: string }) => {
   const { setStep } = useStepper();
-
-  const { data } = useQuery<Order>({
-    queryKey: ['order', orderId],
-    queryFn: async () => {
-      return await getSingleOrder(orderId).then((res) => res.data as Order);
-    },
-    refetchInterval: 1000 * 30,
-  });
+  const [currentStatus, setCurrentStatus] = React.useState("received");
 
   React.useEffect(() => {
-    if (data) {
-      const currentStep = statusMapping[data.orderStatus] || 0;
-      setStep(currentStep + 1);
-    }
-  }, [data]);
+    const socket = io(process.env.NEXT_PUBLIC_API_GATEWAY, {
+      path: "/socket.io",
+      transports: ["websocket"],
+      query: { orderId },
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to order status updates");
+      socket.emit("join-order", { orderId });
+    });
+
+    socket.on("order-status-update", (data) => {
+      if (data.orderId === orderId) {
+        console.log("Received status update:", data.orderStatus);
+        setCurrentStatus(data.orderStatus);
+      }
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [orderId]);
+
+  React.useEffect(() => {
+    const currentStep = statusMapping[currentStatus] || 0;
+    setStep(currentStep);
+    console.log("Updating stepper to step:", currentStep);
+  }, [currentStatus, setStep]);
 
   return null;
 };

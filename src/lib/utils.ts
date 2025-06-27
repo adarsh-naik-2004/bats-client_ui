@@ -29,17 +29,17 @@ export function getFromPrice(product: Product): number {
 }
 
 export function getItemTotal(product: CartItem) {
-    const accessorysTotal = product.chosenConfiguration.selectedAccessorys.reduce(
-        (acc, curr) => acc + curr.price,
-        0
-    );
+  const configPricing = Object.entries(
+    product.chosenConfiguration.priceConfiguration
+  ).reduce((acc, [key, value]: [string, string]) => {
+  
+    const dimensionConfig = product.priceConfiguration[key];
+    
 
-    const configPricing = Object.entries(product.chosenConfiguration.priceConfiguration).reduce(
-        (acc, [key, value]: [string, string]) => {
-            const price = product.priceConfiguration[key].availableOptions[value];
-            return acc + price;
-        },
-        0
-    );
-    return configPricing + accessorysTotal;
+    const price = dimensionConfig.availableOptions[value];
+    
+    return acc + price;
+  }, 0);
+  
+  return configPricing;
 }
