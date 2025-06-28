@@ -125,6 +125,7 @@ const OrderStatus = ({
   return (
     <Stepper
       initialStep={statusMapping[currentStatus] || 0}
+      key={currentStatus}
       steps={steps}
       variant="circle-alt"
       className="py-8 bg-gray-900 border border-orange-500/20 rounded-xl text-orange-200"
