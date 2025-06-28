@@ -37,7 +37,7 @@ const statusMapping = {
   delivered: 4,
 } as { [key: string]: number };
 
-const StepperChanger = ({ orderId }: { orderId: string }) => {
+const OrderStatus = ({ orderId }: { orderId: string }) => {
   const { setStep } = useStepper();
   const [currentStatus, setCurrentStatus] = React.useState("received");
 
@@ -78,10 +78,6 @@ const StepperChanger = ({ orderId }: { orderId: string }) => {
     console.log("Updating stepper to step:", currentStep);
   }, [currentStatus, setStep]);
 
-  return null;
-};
-
-const OrderStatus = ({ orderId }: { orderId: string }) => {
   return (
     <Stepper
       initialStep={0}
@@ -92,7 +88,6 @@ const OrderStatus = ({ orderId }: { orderId: string }) => {
       {steps.map(({ label, icon }) => (
         <Step key={label} label={label} icon={icon} checkIcon={icon} />
       ))}
-      <StepperChanger orderId={orderId} />
     </Stepper>
   );
 };
