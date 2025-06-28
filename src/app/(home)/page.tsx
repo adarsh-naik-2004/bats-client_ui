@@ -1,91 +1,31 @@
-"use client";
-
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import ProductList from "./components/product-list";
 import StoreSelect from "../../components/custom/store-select";
 import { Store } from "@/lib/types";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Zap } from "lucide-react";
+import ScrollController from "../../components/scroll-controller";
 
-export default function Home() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [shops, setShops] = useState<{ data: Store[] }>({ data: [] });
-  const [isLoading, setIsLoading] = useState(true);
-  const [shopId, setShopId] = useState<string | null>(null);
-  const [showProducts, setShowProducts] = useState(false);
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ shopId?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const storesResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_API_GATEWAY}/stores?perPage=100`,
+    { next: { revalidate: 3600 } }
+  );
+  if (!storesResponse.ok) throw new Error("Failed to fetch stores");
+  const shops: { data: Store[] } = await storesResponse.json();
 
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_GATEWAY}/stores?perPage=100`,
-          { cache: "force-cache" }
-        );
-        if (!response.ok) throw new Error("Failed to fetch stores");
-        const data = await response.json();
-        setShops(data);
-        
-        const urlShopId = searchParams.get("shopId");
-        if (urlShopId) {
-          setShopId(urlShopId);
-          setShowProducts(true);
-        }
-      } catch (error) {
-        console.error("Error fetching stores:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchStores();
-  });
-
-  useEffect(() => {
-    if (shopId) {
-      document.body.style.overflow = "auto";
-      
-      setTimeout(() => {
-        const productsSection = document.getElementById("products");
-        if (productsSection) {
-          productsSection.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 300);
-    } else {
-      document.body.style.overflow = "hidden";
-      window.scrollTo(0, 0);
-    }
-    
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [shopId]);
-
-  const handleShopSelect = (selectedShopId: string) => {
-    setShopId(selectedShopId);
-    setShowProducts(true);
-    
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("shopId", selectedShopId);
-    router.replace(`/?${params.toString()}`, { scroll: false });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-orange-300 font-medium">Loading stores...</p>
-        </div>
-      </div>
-    );
-  }
+  const hasSelectedShop = !!resolvedSearchParams.shopId;
 
   return (
     <>
+      <ScrollController hasSelectedShop={hasSelectedShop} />
+      
       <section 
+        id="landing-section"
         className="relative min-h-screen bg-white-900 overflow-hidden z-0"
-        style={{ height: shopId ? "auto" : "100vh" }}
       >
         <div className="absolute inset-0 z-0 bg-[url('/kohli_4.jpg')] bg-cover bg-center opacity-50"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-gray-900/90 to-gray-900/70 z-0"></div>
@@ -119,48 +59,40 @@ export default function Home() {
               <h3 className="text-orange-300 text-lg font-semibold mb-4">
                 Choose Your Store
               </h3>
-              {shops.data.length > 0 ? (
-                <StoreSelect 
-                  shops={shops} 
-                  onSelect={handleShopSelect} 
-                  initialValue={shopId || undefined}
-                />
-              ) : (
-                <div className="text-center py-4">
-                  <div className="flex items-center justify-center gap-3">
-                    <Zap className="text-orange-500 w-5 h-5" />
-                    <p className="text-orange-300">No stores available</p>
-                  </div>
-                </div>
-              )}
+              <StoreSelect shops={shops} />
             </div>
           </div>
         </div>
       </section>
 
-      {showProducts && shopId && (
-        <section
-          id="products"
-          className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 text-white overflow-hidden"
-        >
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center py-24">
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-900/30 to-orange-800/30 px-8 py-4 rounded-2xl backdrop-blur-sm">
-                    <div className="w-6 h-6 border-3 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                      Loading premium products...
-                    </span>
-                  </div>
+      <section
+        id="products"
+        className="relative bg-gradient-to-b from-slate-800 via-slate-900 to-slate-950 text-white overflow-hidden"
+      >
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center">
+              <div className="text-center">
+                <div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-900/30 to-orange-800/30 px-8 py-4 rounded-2xl backdrop-blur-sm">
+                  <div className="w-6 h-6 border-3 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                    Loading premium products...
+                  </span>
                 </div>
               </div>
-            }
-          >
-            <ProductList searchParams={{ shopId }} />
-          </Suspense>
-        </section>
-      )}
+            </div>
+          }
+        >
+          <ProductList
+            searchParams={{
+              shopId:
+                resolvedSearchParams.shopId ??
+                shops.data[0]?.id.toString() ??
+                "",
+            }}
+          />
+        </Suspense>
+      </section>
     </>
   );
 }
