@@ -4,15 +4,23 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import OrderStatus from './components/orderStatus';
-import { Separator } from '@/components/ui/separator';
-import { Coins, LayoutDashboard, Calendar, MessageCircle, ShoppingBasket, Package, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cookies } from 'next/headers';
-import Image from 'next/image';
-import { format } from 'date-fns';
-import Link from 'next/link';
+} from "@/components/ui/card";
+import OrderStatusWrapper from "./components/orderStatus";
+import { Separator } from "@/components/ui/separator";
+import {
+  Coins,
+  LayoutDashboard,
+  Calendar,
+  MessageCircle,
+  ShoppingBasket,
+  Package,
+  ArrowLeft,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cookies } from "next/headers";
+import Image from "next/image";
+import { format } from "date-fns";
+import Link from "next/link";
 
 interface Accessory {
   id: string;
@@ -60,22 +68,26 @@ interface Order {
   customerId: Customer;
 }
 
-const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> }) => {
+const SingleOrder = async ({
+  params,
+}: {
+  params: Promise<{ orderId: string }>;
+}) => {
   const resolvedParams = await params;
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_GATEWAY}/orders/${resolvedParams.orderId}?fields=cart,address,paymentStatus,paymentMode,total,taxes,deliveryCharges,discount,createdAt,comment,orderStatus,customerId`,
     {
       headers: {
-        Authorization: `Bearer ${(await cookies()).get('accessToken')?.value}`,
+        Authorization: `Bearer ${(await cookies()).get("accessToken")?.value}`,
       },
     }
   );
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('Order Fetch Error:', response.status, errorText);
-    throw new Error('Failed to fetch single order');
+    console.error("Order Fetch Error:", response.status, errorText);
+    throw new Error("Failed to fetch single order");
   }
 
   const order: Order = await response.json();
@@ -83,9 +95,9 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return format(date, 'MMM dd, yyyy • hh:mm a');
+      return format(date, "MMM dd, yyyy • hh:mm a");
     } catch (error) {
-      console.error('Error formatting date:', error);
+      console.error("Error formatting date:", error);
       return dateString;
     }
   };
@@ -95,8 +107,8 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
       {/* Back Button */}
       <div className="px-4 md:px-0 mb-4">
         <Link href="/orders">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="text-orange-300 hover:text-orange-400 flex items-center gap-2"
           >
             <ArrowLeft size={18} />
@@ -113,7 +125,10 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <OrderStatus orderId={order._id} />
+          <OrderStatusWrapper
+            orderId={order._id}
+            initialStatus={order.orderStatus}
+          />
         </CardContent>
       </Card>
 
@@ -130,14 +145,14 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
             <CardContent className="pt-6">
               <div className="space-y-4">
                 {order.cart.map((item: CartItem, index: number) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="flex border-b border-gray-700 pb-4 last:border-0 last:pb-0"
                   >
                     <div className="flex-shrink-0 mr-4">
                       <div className="bg-gray-700 border border-gray-600 rounded-lg p-1">
-                        <Image 
-                          src={item.image} 
+                        <Image
+                          src={item.image}
                           alt={item.name}
                           width={80}
                           height={80}
@@ -145,39 +160,42 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
                         />
                       </div>
                     </div>
-                    
+
                     <div className="flex-1">
-                      <h3 className="font-medium text-orange-100">{item.name}</h3>
-                      
-                      {item.chosenConfiguration.selectedAccessorys.length > 0 && (
+                      <h3 className="font-medium text-orange-100">
+                        {item.name}
+                      </h3>
+
+                      {item.chosenConfiguration.selectedAccessorys.length >
+                        0 && (
                         <div className="mt-1 text-sm text-orange-200/80">
-                          <span className="font-medium">Accessories:</span> {' '}
+                          <span className="font-medium">Accessories:</span>{" "}
                           {item.chosenConfiguration.selectedAccessorys
-                            .map(acc => acc.name)
-                            .join(', ')}
+                            .map((acc) => acc.name)
+                            .join(", ")}
                         </div>
                       )}
-                      
+
                       <div className="mt-1 flex flex-wrap gap-2">
-                        {Object.entries(item.chosenConfiguration.priceConfiguration).map(
-                          ([key, value]) => (
-                            <span 
-                              key={key} 
-                              className="px-2 py-1 bg-gray-700/50 text-xs rounded"
-                            >
-                              {key}: {value}
-                            </span>
-                          )
-                        )}
+                        {Object.entries(
+                          item.chosenConfiguration.priceConfiguration
+                        ).map(([key, value]) => (
+                          <span
+                            key={key}
+                            className="px-2 py-1 bg-gray-700/50 text-xs rounded"
+                          >
+                            {key}: {value}
+                          </span>
+                        ))}
                       </div>
                     </div>
-                    
+
                     <div className="text-right">
                       <div className="text-orange-100 font-medium">
                         {item.qty} ×
                       </div>
                       <div className="mt-1 text-sm text-orange-200/80">
-                        Item{item.qty > 1 ? 's' : ''}
+                        Item{item.qty > 1 ? "s" : ""}
                       </div>
                     </div>
                   </div>
@@ -188,12 +206,14 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
 
           <Card className="bg-gray-800 border border-orange-500/20">
             <CardHeader className="p-4">
-              <CardTitle className="text-lg text-orange-300">Delivery Address</CardTitle>
+              <CardTitle className="text-lg text-orange-300">
+                Delivery Address
+              </CardTitle>
             </CardHeader>
             <Separator className="bg-orange-500/30" />
             <CardContent className="pt-6 text-sm">
               <h2 className="font-semibold text-orange-100">
-                {order.customerId.firstName + ' ' + order.customerId.lastName}
+                {order.customerId.firstName + " " + order.customerId.lastName}
               </h2>
               <p className="mt-2 text-orange-200/80">{order.address}</p>
             </CardContent>
@@ -203,7 +223,9 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
         <div className="lg:w-1/3">
           <Card className="bg-gray-800 border border-orange-500/20">
             <CardHeader className="p-4">
-              <CardTitle className="text-lg text-orange-300">Order Information</CardTitle>
+              <CardTitle className="text-lg text-orange-300">
+                Order Information
+              </CardTitle>
             </CardHeader>
             <Separator className="bg-orange-500/30" />
             <CardContent className="pt-6 space-y-4 text-sm text-orange-200/80">
@@ -221,7 +243,9 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
 
               <div className="flex items-center gap-2">
                 <Coins size={18} className="text-orange-400" />
-                <span className="font-medium text-orange-100">Payment method:</span>
+                <span className="font-medium text-orange-100">
+                  Payment method:
+                </span>
                 <span className="uppercase">{order.paymentMode}</span>
               </div>
 
@@ -234,28 +258,38 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
               <div className="pt-4 border-t border-gray-700">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-orange-100">Subtotal:</span>
-                  <span>₹{order.total - order.taxes - order.deliveryCharges + order.discount}</span>
+                  <span>
+                    ₹
+                    {order.total -
+                      order.taxes -
+                      order.deliveryCharges +
+                      order.discount}
+                  </span>
                 </div>
-                
+
                 {order.discount > 0 && (
                   <div className="flex justify-between items-center mt-1">
-                    <span className="font-medium text-orange-100">Discount:</span>
+                    <span className="font-medium text-orange-100">
+                      Discount:
+                    </span>
                     <span className="text-green-400">-₹{order.discount}</span>
                   </div>
                 )}
-                
+
                 <div className="flex justify-between items-center mt-1">
                   <span className="font-medium text-orange-100">Taxes:</span>
                   <span>₹{order.taxes}</span>
                 </div>
-                
+
                 <div className="flex justify-between items-center mt-1">
                   <span className="font-medium text-orange-100">Delivery:</span>
                   <span>₹{order.deliveryCharges}</span>
                 </div>
-                
+
                 <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-700">
-                  <span className="font-medium text-lg text-orange-100">Total:</span>
+                  <span className="font-medium text-lg text-orange-100">
+                    Total:
+                  </span>
                   <span className="font-bold text-lg">₹{order.total}</span>
                 </div>
               </div>
@@ -264,7 +298,9 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
                 <div className="pt-4 mt-4 border-t border-gray-700">
                   <div className="flex items-center gap-2">
                     <MessageCircle size={18} className="text-orange-400" />
-                    <span className="font-medium text-orange-100">Your note:</span>
+                    <span className="font-medium text-orange-100">
+                      Your note:
+                    </span>
                   </div>
                   <p className="mt-2 p-3 bg-gray-700/30 rounded-lg">
                     {order.comment}
@@ -272,12 +308,17 @@ const SingleOrder = async ({ params }: { params: Promise<{ orderId: string }> })
                 </div>
               )}
 
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="mt-6 w-full bg-orange-600 hover:bg-orange-700"
-                disabled={order.orderStatus === 'cancelled' || order.orderStatus === 'delivered'}
+                disabled={
+                  order.orderStatus === "cancelled" ||
+                  order.orderStatus === "delivered"
+                }
               >
-                {order.orderStatus === 'cancelled' ? 'Order Cancelled' : 'Cancel Order'}
+                {order.orderStatus === "cancelled"
+                  ? "Order Cancelled"
+                  : "Cancel Order"}
               </Button>
             </CardContent>
           </Card>
