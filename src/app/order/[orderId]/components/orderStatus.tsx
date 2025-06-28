@@ -80,7 +80,8 @@ const OrderStatus = ({ orderId }: { orderId: string }) => {
 
   return (
     <Stepper
-      initialStep={0}
+      key={currentStatus}
+      initialStep={statusMapping[currentStatus] || 0}
       steps={steps}
       variant="circle-alt"
       className="py-8 bg-gray-900 border border-orange-500/20 rounded-xl text-orange-200"
