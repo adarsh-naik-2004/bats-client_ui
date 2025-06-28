@@ -1,4 +1,5 @@
 "use client";
+
 import { Step, StepItem, Stepper, useStepper } from "@/components/stepper";
 import {
   CheckCheck,
@@ -7,9 +8,8 @@ import {
   Package,
   PackageCheck,
 } from "lucide-react";
-import React from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { createContext, useContext, useEffect } from "react";
 
 const steps = [
   {
@@ -22,22 +22,30 @@ const steps = [
     icon: Package,
     description: "We have started preparing your order",
   },
-  { label: "Prepared", icon: Microwave, description: "Ready for the pickup" },
+  {
+    label: "Prepared",
+    icon: Microwave,
+    description: "Ready for the pickup",
+  },
   {
     label: "Out for delivery",
     icon: PackageCheck,
     description: "Driver is on the way",
   },
-  { label: "Delivered", icon: CheckCheck, description: "Order completed" },
+  {
+    label: "Delivered",
+    icon: CheckCheck,
+    description: "Order completed",
+  },
 ] satisfies StepItem[];
 
-const statusMapping = {
+const statusMapping: { [key: string]: number } = {
   received: 0,
   confirmed: 1,
   prepared: 2,
   out_for_delivery: 3,
   delivered: 4,
-} as { [key: string]: number };
+};
 
 const OrderStatusContext = createContext<{
   currentStatus: string;
@@ -47,15 +55,14 @@ const OrderStatusContext = createContext<{
   setCurrentStatus: () => {},
 });
 
-const OrderStatusProvider = ({ 
+const OrderStatusProvider = ({
   children,
-  initialStatus
-}: { 
+  initialStatus,
+}: {
   children: React.ReactNode;
   initialStatus: string;
 }) => {
-  const [currentStatus, setCurrentStatus] = React.useState(initialStatus);
-  
+  const [currentStatus, setCurrentStatus] = useState(initialStatus);
   return (
     <OrderStatusContext.Provider value={{ currentStatus, setCurrentStatus }}>
       {children}
@@ -65,22 +72,20 @@ const OrderStatusProvider = ({
 
 const useOrderStatus = () => useContext(OrderStatusContext);
 
-const OrderStatus = ({ 
+const OrderStatus = ({
   orderId,
-  initialStatus 
-}: { 
+  initialStatus,
+}: {
   orderId: string;
   initialStatus: string;
 }) => {
-  const { setStep } = useStepper();
   const { currentStatus, setCurrentStatus } = useOrderStatus();
-  const socketRef = React.useRef<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const { setStep } = useStepper();
 
   useEffect(() => {
-    // Initialize with prop value
     setCurrentStatus(initialStatus);
-    
-    // Create socket if none exists
+
     if (!socketRef.current) {
       const socket = io(process.env.NEXT_PUBLIC_API_GATEWAY!, {
         path: "/socket.io",
@@ -104,22 +109,17 @@ const OrderStatus = ({
       });
 
       socket.on("connect_error", (err) => {
-        console.error("Connection error:", err);
+        console.error("Socket connection error:", err);
       });
 
       socketRef.current = socket;
     }
-
-    return () => {
-      // Don't disconnect - keep connection alive
-      // We'll reuse the same socket across mounts
-    };
-  }, [orderId, setCurrentStatus, initialStatus]);
+  }, [orderId, initialStatus, setCurrentStatus]);
 
   useEffect(() => {
     const currentStep = statusMapping[currentStatus] || 0;
     setStep(currentStep);
-    console.log("Updating stepper to step:", currentStep);
+    console.log("Updated stepper to step:", currentStep);
   }, [currentStatus, setStep]);
 
   return (
@@ -136,8 +136,10 @@ const OrderStatus = ({
   );
 };
 
-// Wrap with provider in parent component
-const OrderStatusWrapper = ({ orderId, initialStatus }: { 
+const OrderStatusWrapper = ({
+  orderId,
+  initialStatus,
+}: {
   orderId: string;
   initialStatus: string;
 }) => (
